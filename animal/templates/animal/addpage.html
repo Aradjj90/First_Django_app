@@ -1,0 +1,23 @@
+{% extends 'animal/base.html' %}
+
+{% block content %}
+<h1>{{title}}</h1>
+
+<form method="post" enctype="multipart/form-data"> <!-- enctype потрібновказуваи якщо форма приймає файли -->
+    {% csrf_token %} <!-- захист форми -->
+
+    <div class="form-error">{{ form.non_field_errors}}</div>
+    {% for f in form %}
+    <p><label class="form-label" for="{{f.id_for_label}}">{{f.label}}:</label> {{f}}</p>
+    <div class="form-error">{{f.errors}}</div>
+
+    {% endfor %}
+    {% if post_info.owner == user.username and update_flag %}
+    <button class="btn btn-outline-success sub" type = "submit">Обновити</button>
+    {% else %}
+    <button class="btn btn-outline-success sub" type = "submit">Добавити</button>
+    {% endif %}
+
+</form>
+<br>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'animal/base.html' %}
+
+
+
+{% block content %}
+
+{% if messages %}
+<div class="alert alert-success" role="alert">
+<ul>
+    {% for message in messages %}
+	<li>{{ message }}</li>
+    {% endfor %}
+</ul>
+	</div>
+{% endif %}
+
+{% if your_posts %}
+<h2>Ваші пости:</h2>
+{% else %}
+<h2>Пости сайту:</h2>
+{% endif %}
+<ul class="list-articles">
+	{% for p in posts %}
+
+			<li><div class="article-panel">
+				<p class="first">Категорія: {{p.cat}}</p>
+				{% if your_posts %}
+				{% if p.is_published %}
+				<span class="on_post-info"> Опубліковано на сайті</span>
+				{% else %}
+				<span class="off_post-info"> Не опубліковано на сайті</span>
+				{% endif %}
+				{% endif %}
+				<p class="last">Дата: {{p.time_update|date:"d-m-Y H:i:s"}}</p>
+			</div>
+
+{% if p.photo %}
+				<p><img class="img-article-left thumb" src = "{{p.photo.url}}"></p>
+				{% endif %}
+
+				<h2>{{p.title}}</h2>
+	{% autoescape on %}
+	{{p.content|linebreaks|truncatewords:50}}
+	{% endautoescape %}
+			<div class="post-footer">
+			<span class="post-footer-text">Добавлено користувачем: <span class="post-footer-owner">{{p.owner}}</span> </span><p class="link-read-post">
+				{% if p.owner == user.username %}
+				<a href="{% url 'delete_post' p.slug %}">Видалити</a>
+				<a href="{% url 'update_post' p.slug %}">Оновити</a>
+
+				{% endif %}
+				<a href="{{p.get_absolute_url}}">Читати пост</a></p> <!-- прописати силку-->
+</div>
+			</li>
+	{% endfor %}
+</ul>
+{% endblock %}

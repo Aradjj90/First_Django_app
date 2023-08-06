@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+    <link type="text/css" href="{% static 'animal/css/styles.css' %}" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+</head>
+<body>
+
+<table id ="table-page" border=0 cellpadding="0" cellspacing="0">
+<tr><td valign=top>
+
+    <div id="header">
+        <ul class="h_menu">
+            <li class="logo"><a href="{% url 'home' %}"><div class="logo"></div></a></li>
+            {% for m in menu %}
+                <li ><a href="{% url m.url_name %}">{{m.title}}</a></li>
+            {% endfor %}
+
+
+           <li> <form action="{% url 'search_post' %}" class="d-flex" role="search" method="post">
+               {% csrf_token %}
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searched">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            </li>
+
+
+            {% if request.user.is_authenticated %}
+				<li class="last"><a href="{% url 'profile' %}">Профіль: {{ user.username }} </a> | <a href="{% url 'logout' %}">Вийти</a></li>
+				{% else %}
+				<li class="last"><a href="{% url 'register' %}">Регістрація</a> &supdsub;  <a href="{% url 'login' %}">Зайти</a></li>
+				{% endif %}
+        </ul>
+    </div>
+
+
+
+<table id="table-content" border=0 cellpadding="0" cellspacing="0">
+<tr>
+<!-- Sidebar зліва -->
+	<td valign="top" class="left-chapters">
+
+
+	<ul id="leftchapters">
+		{% if cat_selected == 0 %}
+		<li class="selected">Всі категорії</li>
+		{% else %}
+		<li class="an"><a  href="{% url 'home' %}">Всі категорії</a></li>
+		{% endif %}
+
+        {% for c in cats %}
+		{% if c.pk == cat_selected %}
+
+		<li class="selected">{{ c.name }}</li>
+		{% else %}
+		<li  class="an"><a href="{{ c.get_absolute_url }}">{{ c.name }}</a></li>
+		{% endif %}
+		{% endfor %}
+
+            <li class="animation"> </li>
+
+        </ul>
+
+    </td>
+<!-- Кінець Sidebar'а -->
+<td valign="top" class="content">
+
+
+<!-- Блок контента -->
+
+	<div class="content-text">
+      {% block content %}
+    {% endblock %}
+	</div>
+
+
+<!-- Пагінатор -->
+{% if page_obj.has_other_pages %}
+    <nav aria-label="...">
+  <ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+     <li class="page-item"><a class="page-link" href="?page={{page_obj.previous_page_number}}">Previous</a></li>
+      {% else %}
+      <li class="page-item disabled"><a class="page-link">Previous</a></li>
+    {% endif %}
+
+    {% for p in paginator.page_range %}
+      {% if page_obj.number == p %}
+    <li class="page-item active page-link" aria-current="page">{{p}}</li>
+        {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+    <li class="page-item"><a class="page-link" href="?page={{ p }}">{{ p }}</a></li>
+      {% endif %}
+    {% endfor %}
+
+
+   {% if page_obj.has_next %}
+     <li class="page-item"><a class="page-link" href="?page={{page_obj.next_page_number}}">Next</a></li>
+      {% else %}
+      <li class="page-item disabled"><a class="page-link">Next</a></li>
+    {% endif %}
+  </ul>
+</nav>
+    {% endif %}
+
+<!-- Кінець блока пагінації -->
+<!-- Кінець блока контента -->
+
+</td></tr></table>
+</td></tr>
+<!-- Footer -->
+<tr><td valign=top>
+    <div id ="footer">
+        <p>&copy; Вся інформація вз'ята з відкритих джерел <span class="right">"Авторське право" &copy; {{ year }}</span></p>
+
+    </div>
+</td></tr></table>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+</body>
+</html>

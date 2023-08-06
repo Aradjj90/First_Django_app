@@ -1,0 +1,23 @@
+{% extends 'animal/base.html' %}
+
+{% block content %}
+<center>
+<h1>{{title}}</h1>
+</center>
+<form method="post" enctype="multipart/form-data">
+{% csrf_token %}
+     <div class="form-error">{{ form.non_field_errors}}</div>
+  {% for f in form %}
+  {% if not forloop.last %}
+    <p><label class="form-label" for="{{f.id_for_label}}">{{f.label}}:</label> {{f}}</p>
+    <div class="form-error">{{f.errors}}</div>
+  {% else %}
+    <p><label class="form-label" for="{{f.id_for_label}}">{{f.label}}:</label> {{f}} <span class="info"> &bull; Вам буде присвоєно аватарку когось із тварин </span></p>
+    <div class="form-error">{{f.errors}}</div>
+  {% endif %}
+  {% endfor %}
+  <button class="btn btn-outline-success sub" type="submit">Регістація</button>
+
+</form>
+
+{% endblock %}
